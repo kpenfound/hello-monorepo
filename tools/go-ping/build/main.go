@@ -7,11 +7,8 @@ import (
 	"github.com/kpenfound/hello-monorepo/daggerutils"
 )
 
-func Build(ctx context.Context, client *dagger.Client, os, arch string) (*dagger.Directory, error) {
-	directory, err := client.Host().Workdir().Read().ID(ctx)
-	if err != nil {
-		return nil, err
-	}
+func Build(ctx context.Context, client *dagger.Client, os, arch string) *dagger.Directory {
+	directory := client.Host().Workdir()
 	return daggerutils.GoBuild(daggerutils.GoBuildInput{
 		Client:    client,
 		Os:        os,
@@ -19,5 +16,5 @@ func Build(ctx context.Context, client *dagger.Client, os, arch string) (*dagger
 		Ctx:       ctx,
 		Directory: directory,
 		Workdir:   "tools/go-ping",
-	}), nil
+	})
 }

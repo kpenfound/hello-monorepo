@@ -12,7 +12,7 @@ const (
 )
 
 type GoBuildInput struct {
-	Directory dagger.DirectoryID
+	Directory *dagger.Directory
 	Client    *dagger.Client
 	Ctx       context.Context
 	Os        string
@@ -26,9 +26,10 @@ func GoBuild(cfg GoBuildInput) *dagger.Directory {
 
 	workdir := path.Join("/src", cfg.Workdir)
 
-	builder = builder.WithMountedDirectory("/src", cfg.Directory).WithWorkdir(workdir)
-	builder = builder.WithEnvVariable("GOARCH", cfg.Arch)
-	builder = builder.WithEnvVariable("GOOS", cfg.Os)
+	builder = builder.WithMountedDirectory("/src", cfg.Directory).
+		WithWorkdir(workdir).
+		WithEnvVariable("GOARCH", cfg.Arch).
+		WithEnvVariable("GOOS", cfg.Os)
 
 	// Execute Command
 	builder = builder.Exec(dagger.ContainerExecOpts{

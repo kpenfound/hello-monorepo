@@ -22,18 +22,12 @@ func GoUname(ctx context.Context) {
 	defer client.Close()
 	os, arch := getOsArch()
 
-	uname, err := gouname.Build(ctx, client, os, arch)
+	uname := gouname.Build(ctx, client, os, arch)
+
+	_, err = uname.Export(ctx, ".")
 	if err != nil {
 		panic(err)
 	}
-	unameID, err := uname.ID(ctx)
-	if err != nil {
-		panic(err)
-	}
-
-	workdir := client.Host().Workdir()
-
-	_, err = workdir.Write(ctx, unameID, dagger.HostDirectoryWriteOpts{})
 }
 
 func GoServer(ctx context.Context) {
@@ -44,29 +38,9 @@ func GoServer(ctx context.Context) {
 	defer client.Close()
 	os, arch := getOsArch()
 
-	server, err := goserver.Build(ctx, client, os, arch)
-	if err != nil {
-		panic(err)
-	}
-	serverID, err := server.ID(ctx)
-	if err != nil {
-		panic(err)
-	}
+	server := goserver.Build(ctx, client, os, arch)
 
-	workdir := client.Host().Workdir()
-
-	_, err = workdir.Write(ctx, serverID, dagger.HostDirectoryWriteOpts{})
-}
-
-func PyServerBuild(ctx context.Context) {
-	client, err := dagger.Connect(ctx, dagger.WithLogOutput(os.Stdout))
-	if err != nil {
-		panic(err)
-	}
-	defer client.Close()
-	os, arch := getOsArch()
-
-	_, err = pyserver.Build(ctx, client, os, arch)
+	_, err = server.Export(ctx, ".")
 	if err != nil {
 		panic(err)
 	}
@@ -79,16 +53,8 @@ func PyServerPush(ctx context.Context) {
 	}
 	defer client.Close()
 
-	build, err := pyserver.Build(ctx, client, "linux", "amd64")
-	if err != nil {
-		panic(err)
-	}
-
-	image, err := pyserver.Image(ctx, client, build)
-	if err != nil {
-		panic(err)
-	}
-
+	build := pyserver.Build(ctx, client, "linux", "amd64")
+	image := pyserver.Image(ctx, client, build)
 	addr, err := pyserver.Push(ctx, image)
 	if err != nil {
 		panic(err)

@@ -2,7 +2,7 @@ module github.com/kpenfound/hello-monorepo
 
 go 1.19
 
-require dagger.io/dagger v0.3.1
+require dagger.io/dagger v0.4.0
 
 require (
 	github.com/Khan/genqlient v0.5.0 // indirect
@@ -11,11 +11,13 @@ require (
 	github.com/bhoriuchi/graphql-go-tools v1.0.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/containerd/console v1.0.3 // indirect
-	github.com/containerd/containerd v1.6.8 // indirect
+	github.com/containerd/containerd v1.6.9 // indirect
 	github.com/containerd/continuity v0.3.0 // indirect
 	github.com/containerd/ttrpc v1.1.0 // indirect
 	github.com/containerd/typeurl v1.0.2 // indirect
-	github.com/dagger/dagger v0.3.2 // indirect
+	github.com/dagger/dagger v0.3.3 // indirect
+	github.com/dagger/graphql v0.0.0-20221102000338-24d5e47d3b72 // indirect
+	github.com/dagger/graphql-go-tools v0.0.0-20221102001222-e68b44170936 // indirect
 	github.com/docker/cli v20.10.17+incompatible // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/docker v20.10.17+incompatible // indirect

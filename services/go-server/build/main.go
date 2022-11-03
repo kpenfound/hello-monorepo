@@ -10,11 +10,8 @@ import (
 	gouname "github.com/kpenfound/hello-monorepo/tools/go-uname/build"
 )
 
-func Build(ctx context.Context, client *dagger.Client, os, arch string) (*dagger.Directory, error) {
-	directory, err := client.Host().Workdir().Read().ID(ctx)
-	if err != nil {
-		return nil, err
-	}
+func Build(ctx context.Context, client *dagger.Client, os, arch string) *dagger.Directory {
+	directory := client.Host().Workdir()
 
 	build := daggerutils.GoBuild(daggerutils.GoBuildInput{
 		Client:    client,
@@ -24,34 +21,15 @@ func Build(ctx context.Context, client *dagger.Client, os, arch string) (*dagger
 		Directory: directory,
 		Workdir:   "services/go-server",
 	})
-	buildBinary, err := build.File("/go-server").ID(ctx)
-	if err != nil {
-		return nil, err
-	}
 
 	// go-server image requires go-ping and go-uname from tools
-	ping, err := goping.Build(ctx, client, os, arch)
-	if err != nil {
-		return nil, err
-	}
-	pingBinary, err := ping.File("/go-ping").ID(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	uname, err := gouname.Build(ctx, client, os, arch)
-	if err != nil {
-		return nil, err
-	}
-	unameBinary, err := uname.File("/go-uname").ID(ctx)
-	if err != nil {
-		return nil, err
-	}
+	ping := goping.Build(ctx, client, os, arch)
+	uname := gouname.Build(ctx, client, os, arch)
 
 	buildOutputs := client.Directory().
-		WithCopiedFile("/go-server", buildBinary).
-		WithCopiedFile("/go-ping", pingBinary).
-		WithCopiedFile("/go-uname", unameBinary)
+		WithFile("/go-server", build.File("/go-server")).
+		WithFile("/go-ping", ping.File("/go-ping")).
+		WithFile("/go-uname", uname.File("/go-uname"))
 
-	return buildOutputs, nil
+	return buildOutputs
 }
